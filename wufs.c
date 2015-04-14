@@ -1,8 +1,8 @@
 /*
  * Utility routines supporting the Williams Unary File System
- * (c) the Great Class of 2015, especially <your name here>
+ * (c) the Great Class of 2016, especially Tony Liu and Reid Pryzant
  */
-
+#include <linux/types.h>                                                                             
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,6 +29,7 @@ int fullChunks(int size, int chunkSize)
  */
 void setBit(__u8 *f, int i)
 {
+  f[i/8] |= 1<<(i%8);
 }
 
 /*
@@ -36,14 +37,17 @@ void setBit(__u8 *f, int i)
  */
 void clearBit(__u8 *f, int i)
 {
+  f[i/8] &= ~(1<<(i%8));
 }
 
 /*
  * Return the ith bit (zero origin) in bitfield field: 0 or 1
  */
-int getBit(__u8 *field, int i)
+int getBit(__u8 *f, int i)
 {
-  return 42;
+  if (1<<(i%8) & f[i/8]) return 1;
+  else                   return 0;
+
 }
 
 /*
@@ -52,7 +56,12 @@ int getBit(__u8 *field, int i)
  */
 int findNextSet(__u8 *f, int i, int n)
 {
-  return 666;
+  if(i<0) i = 0;
+  while (i <= n) {
+    if (getBit(f, i)) return i;
+    i++;
+  }
+  return -1;
 }
 
 /*
@@ -61,5 +70,12 @@ int findNextSet(__u8 *f, int i, int n)
  */
 int findNextClear(__u8 *f, int i, int n)
 {
-  return 13;
+  if(i<0) i = 0;
+  while (i <= n) {
+    if (!getBit(f, i)) return i;
+    i++;
+  }
+  return -1;
 }
+
+

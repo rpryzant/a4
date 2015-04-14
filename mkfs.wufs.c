@@ -28,7 +28,7 @@
 #include "wufs.h"
 
 static char *ProgName = 0;	/* name of this utility */
-static int Verbose = 0;		/* talk and talk about what's up */
+static int Verbose = 1;		/* talk and talk about what's up */
 static char *Device = 0;	/* the target device */
 static int Disk = -1;		/* descriptor of device */
 static int Check = 0;		/* check blocks on device */

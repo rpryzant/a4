@@ -6,6 +6,8 @@
 #ifndef WUFS_H
 #define WUFS_H
 
+#include <linux/types.h>
+
 typedef __u8 *bitmap;
 /*
  * Routines common to WUFS utilities (defined in wufs.c)
