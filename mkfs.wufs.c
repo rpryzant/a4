@@ -1,6 +1,6 @@
 /*
  * Make Williams Unix File System utility, mkfs.wufs.
- * (c) the Great Class of 2015, especially <your name here>
+ * (c) the Great Class of 2015, especially Reid Pryzant and Tony Liu
  *
  * Usage: mkwufs [-c] [-l file] filesystem
  *    -c    check disk blocks, possibly creating bad block list
@@ -41,6 +41,7 @@ static bitmap IMap;		       /* the inode map */
 static bitmap BMap;		       /* the block map */
 static struct wufs_inode *Inode = 0;  /* the inode structures */
 static struct wufs_dirent *RootDir = 0; /* root directory block */
+static struct wufs_dirent *ScndRootDir = 0; /* secondary root directory block */
 
 inline int maximum(int a, int b) { return (a>b)?a:b; }
 inline int minimum(int a, int b) { return (a<b)?a:b; }
@@ -390,17 +391,28 @@ void buildInodes(void)
 
   /*  2. allocate space for the directory file */
   int rootDir = allocBlock();	/* allocate directory store */
-  RootDir = (struct wufs_dirent *)calloc(WUFS_BLOCKSIZE,1);
+  int secondBlk = allocBlock(); /*NOTE: the second block for directory store */
+
+  RootDir = (struct wufs_dirent *)calloc(WUFS_BLOCKSIZE,1); 
   if (!RootDir) {
     fprintf(stderr,"Could not allocate memory to hold root directory image.\n");
     exit(1);
   }
   rino->in_block[0] = rootDir;
 
+  // allocate space for second half of directory table
+  ScndRootDir = (struct wufs_dirent *)calloc(WUFS_BLOCKSIZE, 1);
+  if (!ScndRootDir) {
+    fprintf(stderr,"Could not allocate memory to hold root directory image.\n");
+    exit(1);
+  }
+  rino->in_block[1] = secondBlk;
+
+
   /* tell me something I don't know */
   if (Verbose) {
-    fprintf(stderr,"Root directory is at inode %d, using block %d.\n",
-	    rootInode, rootDir);
+    fprintf(stderr,"First root directory is at inode %d, using block %d and %d.\n",
+	    rootInode, rootDir, secondBlk);
   }
 
   /*  3. populate the directory file: */
@@ -438,8 +450,15 @@ void buildInodes(void)
      * (Woof.  This system is a dog.)
      */
     if ((dp - RootDir) >= WUFS_DIRENTS_PER_BLOCK) {
+      // if the first block of the directory table is exausted, 
+      // switch to the second
+      dp = ScndRootDir;
+    }
+
+    // We believe this is the new check for too many bad blocks
+    if(rino->in_size >= 2*WUFS_BLOCKSIZE) {
       fprintf(stderr,"Too many bad blocks to store in root directory.\n");
-      exit(1);
+      exit(1); 
     }
 
     /* allocate inode to hold some bad block pointers */
@@ -455,8 +474,8 @@ void buildInodes(void)
 	fprintf(stderr,"Internal error: lost bad block while building root directory.\n");
 	exit(1);
       }
-      /* take care: step over root directory block (only one allocated) */
-      if (bblock != rootDir) {
+      /* take care: step over BOTH root directory blocks */
+      if (bblock != rootDir && bblock != secondBlk) {
 	if (Verbose) {
 	  fprintf(stderr," %d",bblock); fflush(stderr);
 	}
@@ -578,9 +597,13 @@ void writeFS(void)
   lba += SB->sb_bmap_bcnt;
   writeBlocks(Disk, lba, Inode, SB->sb_inodes/WUFS_INODES_PER_BLOCK);
 
-  /* write the root directory */
+  /* write the first block of the root directory */
   int rootDirLBA = Inode[0].in_block[0];
   writeBlocks(Disk, rootDirLBA, RootDir, 1);
+
+  /* write the second block of the root directory */
+  rootDirLBA = Inode[0].in_block[1];
+  writeBlocks(Disk, rootDirLBA, ScndRootDir, 1);
 
   /* free at last, free at last */
   if (Verbose) {

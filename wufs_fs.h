@@ -85,7 +85,7 @@ struct wufs_inode {
  *   - 14 character names will not be null terminated; you have been warned
  *   - the directory entry size should be a power of two
  */
-#define WUFS_NAMELEN 14
+#define WUFS_NAMELEN 14 //NOTE: should be 30
 #define WUFS_DIRENTSIZE	16
 #define WUFS_DIRENTS_PER_BLOCK (WUFS_BLOCKSIZE/WUFS_DIRENTSIZE)
 
