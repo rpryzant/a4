@@ -48,7 +48,8 @@ struct wufs_super_block {
   __u16 sb_inodes;		/* count of inodes */
   __u16 sb_imap_bcnt;		/* the size (in blocks) of the imap */
   __u16 sb_bmap_bcnt;		/* the size (in blocks) of the bmap */
-  __u16 sb_max_fsize;		/* the maximum file size */
+  __u32 sb_max_fsize;		/* the maximum file size. u32 to support >64k files */
+  //char *secret_message = "SSSH DON'T TELL DUANE ABOUT THIS VERY SECRET MESSAGE";
 };
 
 /*
@@ -57,11 +58,11 @@ struct wufs_super_block {
  * Notes:
  *   - size of nlinks is sufficient, but not necessary.
  *   - location of the u32 field arranged on u32 boundary to avoid padding
- *   - all pointers are direct
+ *   - all pointers are direct except for the last
  *   - time is taken to be last modification time
  */
 #define WUFS_LINK_MAX	        255
-#define WUFS_INODE_BPTRS 9
+#define WUFS_INODE_BPTRS 8 // changed to 8
 #define WUFS_INODESIZE   32
 #define WUFS_INODES_PER_BLOCK (WUFS_BLOCKSIZE/WUFS_INODESIZE)
 #define WUFS_ROOT_INODE 1 /* asserted lba of root directory's inode */
@@ -75,7 +76,20 @@ struct wufs_inode {
   __u16 in_size;		/* file size (bytes) */
   /* 14 bytes used so far...*/
   __u16 in_block[WUFS_INODE_BPTRS]; /* index of data blocks */
+  __u16 indirect_in_block;
   /* block logically fills to WUFS_INODESIZE (see below) */
+};
+
+/* 
+ * wufs_single_indirect:
+ * Index block containing the addresses of data blocks
+ * Notes:
+ *   - all pointers are direct
+ */
+#define WUFS_SINGLE_INDIRECT_BPTRS (WUFS_BLOCKSIZE/2) //2 byte addresses
+
+struct wufs_single_indirect {
+  __u16 in_block[WUFS_SINGLE_INDIRECT_BPTRS];
 };
 
 /*
@@ -85,8 +99,8 @@ struct wufs_inode {
  *   - 14 character names will not be null terminated; you have been warned
  *   - the directory entry size should be a power of two
  */
-#define WUFS_NAMELEN 14 //NOTE: should be 30
-#define WUFS_DIRENTSIZE	16
+#define WUFS_NAMELEN 30 // changed to 30
+#define WUFS_DIRENTSIZE	32
 #define WUFS_DIRENTS_PER_BLOCK (WUFS_BLOCKSIZE/WUFS_DIRENTSIZE)
 
 struct wufs_dirent {
