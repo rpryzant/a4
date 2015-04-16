@@ -1,0 +1,6 @@
+(c) 2015 Tony Liu and Reid Pryzant
+
+TODO: why is there an empty 16 bit space in the superblock between bmap size and max_fsize?
+
+Note: max file size is 519k, due to the fact that we need to 32 bytes to store our file size,
+resulting in a reduction of the length of in_block by one to 8. Thus 7 + 1024/2 = 519k.
