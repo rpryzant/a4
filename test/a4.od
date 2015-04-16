@@ -1,31 +1,52 @@
 000000 nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
           0000    0000    0000    0000    0000    0000    0000    0000
 *
-000400   o  so soh nul dc4 nul enq nul  sp nul soh nul soh nul nul   $
-          0eef    0001    0014    0005    0020    0001    0001    2400
-000410 nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
+000400   o   > soh nul dc4 nul enq nul  sp nul soh nul soh nul nul nul
+          beef    0001    0014    0005    0020    0001    0001    0000
+000410 nul  fs  bs nul nul nul nul nul nul nul nul nul nul nul nul nul
+          1c00    0008    0000    0000    0000    0000    0000    0000
+000420 nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
           0000    0000    0000    0000    0000    0000    0000    0000
 *
-000800 soh nul nul nul del del del del del del del del del del del del
-          0001    0000    ffff    ffff    ffff    ffff    ffff    ffff
+000800 etx nul nul nul del del del del del del del del del del del del
+          0003    0000    ffff    ffff    ffff    ffff    ffff    ffff
 000810 del del del del del del del del del del del del del del del del
           ffff    ffff    ffff    ffff    ffff    ffff    ffff    ffff
 *
-000c00   ? nul   p del del del del del del del del del del del del del
-          003f    fff0    ffff    ffff    ffff    ffff    ffff    ffff
+000c00 del del   s del del del del del del del del del del del del del
+          ffff    fff3    ffff    ffff    ffff    ffff    ffff    ffff
 000c10 del del del del del del del del del del del del del del del del
           ffff    ffff    ffff    ffff    ffff    ffff    ffff    ffff
 *
-001000   m   A stx nul   j etx   j etx   y   l   ,   U  sp nul enq nul
-          41ed    0002    03ea    03ea    6cf9    552c    0020    0005
-001010 nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
+001000   m   A stx nul dle   N dle   N   u  rs   0   U   ` nul nul nul
+          41ed    0002    4e90    4e90    1ef5    5530    0060    0000
+001010 dle nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
+          0010    0000    0000    0000    0000    0000    0000    0000
+001020   $ soh soh nul dle   N dle   N   u  rs   0   U nul   , nul nul
+          81a4    0001    4e90    4e90    1ef5    5530    2c00    0000
+001030 enq nul ack nul bel nul  bs nul  ht nul  nl nul  vt nul dc1 nul
+          0005    0006    0007    0008    0009    000a    000b    0011
+001040 nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
           0000    0000    0000    0000    0000    0000    0000    0000
 *
-001400 soh nul   . nul nul nul nul nul nul nul nul nul nul nul nul nul
+004000 soh nul   . nul nul nul nul nul nul nul nul nul nul nul nul nul
           0001    002e    0000    0000    0000    0000    0000    0000
-001410 soh nul   .   . nul nul nul nul nul nul nul nul nul nul nul nul
+004010 nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
+          0000    0000    0000    0000    0000    0000    0000    0000
+004020 soh nul   .   . nul nul nul nul nul nul nul nul nul nul nul nul
           0001    2e2e    0000    0000    0000    0000    0000    0000
-001420 nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
+004030 nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
+          0000    0000    0000    0000    0000    0000    0000    0000
+004040 stx nul   .   s   u   p   e   r   u   l   t   r   a   m   e   g
+          0002    732e    7075    7265    6c75    7274    6d61    6765
+004050   a   b   a   d   _   b   l   o   c   k   s nul nul nul nul nul
+          6261    6461    625f    6f6c    6b63    0073    0000    0000
+004060 nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
+          0000    0000    0000    0000    0000    0000    0000    0000
+*
+004400  ff nul  cr nul  so nul  si nul nul nul nul nul nul nul nul nul
+          000c    000d    000e    000f    0000    0000    0000    0000
+004410 nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul nul
           0000    0000    0000    0000    0000    0000    0000    0000
 *
 005000
