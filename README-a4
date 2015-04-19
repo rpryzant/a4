@@ -1,6 +1,14 @@
 (c) 2015 Tony Liu and Reid Pryzant
 
-TODO: why is there an empty 16 bit space in the superblock between bmap size and max_fsize?
+The new features of our filesystem include:
 
-Note: max file size is 519k, due to the fact that we need to 32 bytes to store our file size,
-resulting in a reduction of the length of in_block by one to 8. Thus 7 + 1024/2 = 519k.
+1) New bitwise utility routines for bit vector support. These modifications are straightforward and need no explanation. 
+
+2) Increased the upper bound on filename length. In the old directory table, a directory file block contained 32 16 byte directory listings. Because each listing was limited to 16 bytes (2 of which are automatically taken up by the inode entry pointer), the filename itself was limited to 14 bytes. We changed this upper bound on names to 30, making the entire listing 32 bytes in size, and allowing for 16 directory listings to exist in each directory file block. 
+
+3) Increased the maximum file size. The vanilla mkfs.wufs allowed for no indirection. Each inode contained 9 direct data block pointers, making the maximum filesize 9 * 1k = 9k. We added single indirection capabilities to the filesystem. We reduced the number of inode datablock pointers to 8 and reserved the 9th pointer for single indirection. If a file is being written and has consumed 8 blocks without finishing, than we allocate a new "IndirectBlock" which consists of an additional 1024 / 2 = 514 data block pointers. We then move the data block pointer ("bbptr") inside this indirect block and continue writing. Note that the max file size is 519k, due to the fact that we need to 32 bytes to store our file size in every inode,
+resulting in a reduction of the length of in_block by one to 8. Thus 7 + 1024/2 = 519k. Another 32 bit consequence of the new filesize is the "sb_max_fsize" field in the superblock. 
+
+4) Bad blocks are now gathered into a single file. We gathered all bad blocks into a single file and built indirection into the bad block collection procedure if it is needed. When the bad block file is being written to disk, the indirect block is now written as well if it exists. 
+
+5) We created a test image with a 15k bad block file and a 24 character bad block filename to prove that our changes worked. 
